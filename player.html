@@ -168,7 +168,7 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
 <div class="topbar">
   <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-chevron-left"></i></button>
   <div class="topbar-title" id="topTitle">Cargando...</div>
-  <div class="topbar-logo"><img src="logo.png" alt="Logo" class="site-logo-img"></div>
+  <div class="topbar-logo"><img src="https://i.ibb.co/RTv2gJF4/20260203-025506.png" alt="Logo" class="site-logo-img"></div>
 </div>
 
 <div class="video-wrap" id="videoWrap">
@@ -180,11 +180,11 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
 
   <div class="video-loading" id="videoLoading">
     <div class="spinner"></div>
-    <p>Conectando al servidor...</p>
+    <p>Conectando al servidor elegido...</p>
   </div>
   <div class="video-error" id="videoError">
     <i class="fa-solid fa-triangle-exclamation"></i>
-    <p>Este servidor no está disponible.<br>Prueba con otro.</p>
+    <p>Este servidor aún no está disponible.<br>Prueba con otro.</p>
     <button onclick="nextServer()"><i class="fa-solid fa-rotate-right"></i> Siguiente servidor</button>
   </div>
   <button class="fs-btn" onclick="toggleFS()"><i class="fa-solid fa-expand" id="fsIcon"></i></button>
@@ -192,7 +192,7 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
 
 <!-- SERVERS -->
 <div class="server-section">
-  <div class="server-label"><i class="fa-solid fa-server"></i> Servidor</div>
+  <div class="server-label"><i class="fa-solid fa-server"></i> Servidores</div>
   <div class="servers-row" id="serversRow"></div>
 </div>
 
@@ -303,7 +303,7 @@ function buildUrl(idx, tmdb, type, s, e, imdb) {
    INIT
 ══════════════════════════════════════ */
 document.getElementById('topTitle').textContent = mediaTitle;
-document.title = mediaTitle + ' — LordFlix';
+document.title = mediaTitle + ' — PelisVidHD';
 buildServerButtons();
 loadMedia();
 
