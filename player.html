@@ -261,11 +261,11 @@ let imdbId        = null;
    SERVERS
 ══════════════════════════════════════ */
 const SERVERS = [
-  { name: 'Servidor 1', icon: 'fa-solid fa-play-circle' },
-  { name: 'Servidor 2', icon: 'fa-solid fa-circle-play' },
-  { name: 'Servidor 3', icon: 'fa-solid fa-film' },
-  { name: 'Servidor 4', icon: 'fa-solid fa-server' },
-  { name: 'Servidor 5', icon: 'fa-solid fa-bolt' },
+  { name: 'TONPlayer', icon: 'fa-solid fa-play-circle' },
+  { name: 'Unlimplay', icon: 'fa-solid fa-play-circle' },
+  { name: 'Embed69', icon: 'fa-solid fa-play-circle' },
+  { name: 'Vimeus', icon: 'fa-solid fa-play-circle' },
+  { name: 'VerHDLink', icon: 'fa-solid fa-play-circle' },
 ];
 
 // Servers that need IMDb id — silently upgrade URL once imdbId is resolved
@@ -276,8 +276,8 @@ function buildUrl(idx, tmdb, type, s, e, imdb) {
   switch (idx) {
     case 0:
       return type === 'movie'
-        ? `https://tonplayer.embedvidhd.workers.dev/play.php?id=${tmdb}`
-        : `https://tonplayer.embedvidhd.workers.dev/play.php?id=${tmdb}&tm=${s}&ep=${e}`;
+        ? `https://api.tonplayer.space/play/movie/${tmdb}`
+        : `https://tonplayer.space/play/tv/${tmdb}/${s}/${e}`;
     case 1:
       return type === 'movie'
         ? `https://unlimplay.com/play/embed/movie/${tmdb}`
