@@ -277,7 +277,7 @@ function buildUrl(idx, tmdb, type, s, e, imdb) {
     case 0:
       return type === 'movie'
         ? `https://api.tonplayer.space/play/movie/${tmdb}`
-        : `https://tonplayer.space/play/tv/${tmdb}/${s}/${e}`;
+        : `https://api.tonplayer.space/play/tv/${tmdb}`;
     case 1:
       return type === 'movie'
         ? `https://unlimplay.com/play/embed/movie/${tmdb}`
