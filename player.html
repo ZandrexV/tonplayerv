@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
-<title>Player — LordFlix</title>
+<title>Player — PelisVidHD</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
@@ -928,8 +928,16 @@ async function tmdb(path, extra = {}) {
   Object.entries(extra).forEach(([k,v]) => u.searchParams.set(k,v));
   try {
     const r = await fetch(u);
-    return r.ok ? r.json() : null;
-  } catch { return null; }
+    if (!r.ok) {
+      const err = await r.json().catch(()=>({error:'unknown'}));
+      console.error('[TMDB proxy] HTTP', r.status, path, err);
+      return null;
+    }
+    return r.json();
+  } catch(e) {
+    console.error('[TMDB proxy] network error', e.message);
+    return null;
+  }
 }
 
 /* ════════════════════════════════════════════
