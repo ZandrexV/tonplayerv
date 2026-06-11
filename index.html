@@ -75,20 +75,20 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
 .slide.active{opacity:1;pointer-events:all}
 .slide-bg{position:absolute;inset:0;background-size:cover;background-position:center 15%;transform:scale(1.04);transition:transform 6s ease}
 .slide.active .slide-bg{transform:scale(1)}
-.slide-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.25) 0%,rgba(0,0,0,0) 26%,rgba(0,0,0,.5) 56%,rgba(0,0,0,.9) 78%,#000 100%)}
+.slide-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.3) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,.45) 50%,rgba(0,0,0,.85) 72%,#000 90%)}
 
 .top-logo{position:absolute;top:max(48px,calc(env(safe-area-inset-top,0px)+12px));left:18px;z-index:20;user-select:none;line-height:0}
 .site-logo-img{height:30px;width:auto;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.7))}
 
-.slide-content{position:absolute;bottom:calc(var(--nav-h)+28px);left:0;right:0;padding:0 20px;z-index:10;display:flex;flex-direction:column;align-items:center;text-align:center}
-.slide-logo{max-width:70%;max-height:85px;object-fit:contain;margin-bottom:13px;filter:drop-shadow(0 4px 16px rgba(0,0,0,.85));display:block}
-.slide-title-text{font-size:clamp(1.8rem,8vw,3rem);font-weight:800;letter-spacing:-.02em;line-height:1.05;text-shadow:0 2px 16px rgba(0,0,0,.8);margin-bottom:13px}
-.meta-row{display:flex;align-items:center;justify-content:center;gap:13px;margin-bottom:11px;font-size:.76rem;font-weight:500;color:rgba(255,255,255,.78)}
+.slide-content{position:absolute;bottom:calc(var(--nav-h)+22px);left:0;right:0;padding:0 20px;z-index:10;display:flex;flex-direction:column;align-items:flex-start;text-align:left}
+.slide-logo{max-width:72%;max-height:80px;object-fit:contain;object-position:left center;margin-bottom:12px;filter:drop-shadow(0 4px 16px rgba(0,0,0,.85));display:block}
+.slide-title-text{font-size:clamp(1.6rem,7vw,2.8rem);font-weight:800;letter-spacing:-.02em;line-height:1.05;text-shadow:0 2px 16px rgba(0,0,0,.8);margin-bottom:12px}
+.meta-row{display:flex;align-items:center;justify-content:flex-start;gap:13px;margin-bottom:11px;font-size:.76rem;font-weight:500;color:rgba(255,255,255,.78)}
 .meta-item{display:flex;align-items:center;gap:4px}
 .meta-item i{font-size:.68rem;opacity:.75}
 .star{color:var(--gold)!important;opacity:1!important}
-.overview{font-size:.78rem;font-weight:400;color:rgba(255,255,255,.72);line-height:1.55;max-width:330px;margin:0 auto 18px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.btn-row{display:flex;gap:9px;align-items:center;justify-content:center;width:100%;max-width:350px}
+.overview{font-size:.78rem;font-weight:400;color:rgba(255,255,255,.72);line-height:1.55;max-width:300px;margin:0 0 16px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.btn-row{display:flex;gap:9px;align-items:center;justify-content:flex-start;width:100%;max-width:340px}
 .btn-play{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;background:#fff;color:#000;border:none;border-radius:50px;height:47px;font-family:'Inter',sans-serif;font-size:.86rem;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:opacity .15s}
 .btn-play:active{opacity:.8}
 .btn-secondary{display:flex;align-items:center;background:rgba(255,255,255,.12);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:#fff;border:1px solid rgba(255,255,255,.18);border-radius:50px;height:47px;cursor:pointer;padding:0 4px;transition:background .15s}
@@ -96,7 +96,7 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
 .btn-icon{display:flex;align-items:center;justify-content:center;width:40px;height:40px;font-size:.85rem}
 .btn-sep{width:1px;height:17px;background:rgba(255,255,255,.2);margin:0 1px}
 
-.hero-dots{position:absolute;bottom:calc(var(--nav-h)+6px);left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:20}
+.hero-dots{position:absolute;bottom:calc(var(--nav-h)+8px);left:20px;display:flex;gap:5px;z-index:20}
 .dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.28);transition:all .3s;cursor:pointer}
 .dot.active{width:17px;border-radius:3px;background:#fff}
 
@@ -213,7 +213,7 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
 <!-- ══ PAGE: HOME ══ -->
 <div class="page active" id="page-home">
   <div class="hero" id="hero">
-    <div class="top-logo"><img src="logo.png" alt="Logo" class="site-logo-img"></div>
+    <div class="top-logo"><img src="https://i.ibb.co/RTv2gJF4/20260203-025506.png" alt="Logo" class="site-logo-img"></div>
     <div class="hero-dots" id="heroDots"></div>
   </div>
   <div class="below-hero">

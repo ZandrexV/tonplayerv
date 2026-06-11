@@ -130,6 +130,26 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
 .sk{background:linear-gradient(90deg,#1c1c1e 25%,#252525 50%,#1c1c1e 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
+/* EXTRA SECTIONS */
+.extra-section{padding:12px 0 4px;border-top:1px solid var(--border)}
+.extra-label{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:9px;padding:0 16px;display:flex;align-items:center;gap:5px}
+
+.cast-row{display:flex;gap:9px;overflow-x:auto;padding:0 16px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.cast-row::-webkit-scrollbar{display:none}
+.cast-chip{flex-shrink:0;width:58px;text-align:center}
+.cast-av{width:52px;height:52px;border-radius:50%;overflow:hidden;background:var(--card);border:1.5px solid var(--border);margin:0 auto 4px}
+.cast-av img{width:100%;height:100%;object-fit:cover;display:block}
+.cast-av-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.95rem}
+.cast-name{font-size:.58rem;color:rgba(255,255,255,.7);line-height:1.2;word-break:break-word}
+.cast-char{font-size:.54rem;color:var(--muted);margin-top:1px;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+.sim-row{display:flex;gap:9px;overflow-x:auto;padding:0 16px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.sim-row::-webkit-scrollbar{display:none}
+.sim-card{flex-shrink:0;width:90px;cursor:pointer;transition:opacity .15s}
+.sim-card:active{opacity:.7}
+.sim-card img{width:90px;aspect-ratio:2/3;border-radius:9px;object-fit:cover;display:block;border:1px solid var(--border);margin-bottom:4px}
+.sim-card p{font-size:.6rem;color:rgba(255,255,255,.65);line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
 /* TOAST */
 .toast{
   position:fixed;bottom:24px;left:50%;
@@ -148,7 +168,7 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
 <div class="topbar">
   <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-chevron-left"></i></button>
   <div class="topbar-title" id="topTitle">Cargando...</div>
-  <div class="topbar-logo"><img src="https://i.ibb.co/RTv2gJF4/20260203-025506.png" alt="Logo" class="site-logo-img"></div>
+  <div class="topbar-logo"><img src="logo.png" alt="Logo" class="site-logo-img"></div>
 </div>
 
 <div class="video-wrap" id="videoWrap">
@@ -205,6 +225,18 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
   <div class="info-desc sk" id="infoDesc" style="height:50px;border-radius:8px"></div>
 </div>
 
+<!-- CAST -->
+<div class="extra-section" id="castSection" style="display:none">
+  <div class="extra-label"><i class="fa-solid fa-users"></i> Reparto</div>
+  <div class="cast-row" id="castRow"></div>
+</div>
+
+<!-- SIMILAR -->
+<div class="extra-section" id="simSection" style="display:none">
+  <div class="extra-label"><i class="fa-solid fa-film"></i> Te puede gustar</div>
+  <div class="sim-row" id="simRow"></div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -229,11 +261,11 @@ let imdbId        = null;
    SERVERS
 ══════════════════════════════════════ */
 const SERVERS = [
-  { name: 'TONPlayer', icon: 'fa-solid fa-bolt' },
-  { name: 'Unlimplay', icon: 'fa-solid fa-circle-play' },
-  { name: 'Embed69', icon: 'fa-solid fa-circle-play' },
-  { name: 'Vimeus', icon: 'fa-solid fa-circle-play' },
-  { name: 'VerHDLink', icon: 'fa-solid fa-circle-play' },
+  { name: 'Servidor 1', icon: 'fa-solid fa-play-circle' },
+  { name: 'Servidor 2', icon: 'fa-solid fa-circle-play' },
+  { name: 'Servidor 3', icon: 'fa-solid fa-film' },
+  { name: 'Servidor 4', icon: 'fa-solid fa-server' },
+  { name: 'Servidor 5', icon: 'fa-solid fa-bolt' },
 ];
 
 // Servers that need IMDb id — silently upgrade URL once imdbId is resolved
@@ -307,24 +339,29 @@ function playCurrentServer() {
   document.getElementById('videoLoading').classList.remove('hidden');
   document.getElementById('videoError').classList.remove('show');
 
+  // ── KILL ALL FRAMES first (stops audio from previous server) ──
   document.querySelectorAll('.video-frame').forEach(f => {
     f.classList.remove('active');
+    f.src = 'about:blank'; // cuts audio/video immediately
   });
 
-  const url   = buildUrl(curServer, mediaId, mediaType, curSeason, curEpisode, imdbId);
-  const frame = document.getElementById('frame' + curServer);
-  frame.src   = url;
-  frame.classList.add('active');
+  // Small tick to let 'about:blank' take effect before loading new src
+  setTimeout(() => {
+    const url   = buildUrl(curServer, mediaId, mediaType, curSeason, curEpisode, imdbId);
+    const frame = document.getElementById('frame' + curServer);
+    frame.src   = url;
+    frame.classList.add('active');
+  }, 80);
 
   clearTimeout(loadTimer);
   loadTimer = setTimeout(() => {
     document.getElementById('videoLoading').classList.add('hidden');
-  }, 3000);
+  }, 3200);
 
   const btn = document.getElementById('srv' + curServer);
   if (btn) {
     btn.className = 'srv-btn loading active';
-    setTimeout(() => { if (btn) btn.className = 'srv-btn ok active'; }, 3400);
+    setTimeout(() => { if (btn) btn.className = 'srv-btn ok active'; }, 3600);
   }
 }
 
@@ -335,9 +372,11 @@ async function loadMedia() {
   playCurrentServer();
   if (!mediaId) { renderBasicInfo(); return; }
 
-  const [detail, extIds] = await Promise.all([
+  const [detail, extIds, credits, similar] = await Promise.all([
     tmdb(`/${mediaType}/${mediaId}`),
     tmdb(`/${mediaType}/${mediaId}/external_ids`),
+    tmdb(`/${mediaType}/${mediaId}/credits`),
+    tmdb(`/${mediaType}/${mediaId}/similar`),
   ]);
 
   if (!detail) { renderBasicInfo(); return; }
@@ -394,6 +433,14 @@ async function loadMedia() {
 
   // TV
   if (mediaType === 'tv' && detail.seasons) setupEpisodes(detail);
+
+  // Cast
+  const cast = (credits?.cast || []).slice(0, 12);
+  if (cast.length) renderCast(cast);
+
+  // Similar
+  const sims = (similar?.results || []).filter(i => i.poster_path).slice(0, 12);
+  if (sims.length) renderSimilar(sims);
 }
 
 function renderBasicInfo() {
@@ -506,6 +553,45 @@ document.getElementById('videoWrap').addEventListener('touchend', () => {
   if (now - lastTap < 300) toggleFS();
   lastTap = now;
 });
+
+/* ══════════════════════════════════════
+   CAST & SIMILAR RENDERERS
+══════════════════════════════════════ */
+function renderCast(cast) {
+  const sec = document.getElementById('castSection');
+  const row = document.getElementById('castRow');
+  sec.style.display = 'block';
+  row.innerHTML = cast.map(a => `
+    <div class="cast-chip">
+      <div class="cast-av">
+        ${a.profile_path
+          ? `<img src="${IMG}w92${a.profile_path}" alt="${a.name}" loading="lazy">`
+          : `<div class="cast-av-ph"><i class="fa-solid fa-user"></i></div>`}
+      </div>
+      <div class="cast-name">${a.name}</div>
+      <div class="cast-char">${a.character||''}</div>
+    </div>`
+  ).join('');
+}
+
+function renderSimilar(items) {
+  const sec = document.getElementById('simSection');
+  const row = document.getElementById('simRow');
+  sec.style.display = 'block';
+  row.innerHTML = items.map(item => {
+    const title = item.title || item.name || '';
+    return `<div class="sim-card" onclick="goto(${item.id},'${mediaType}','${title.replace(/'/g,"\'")}')">
+      <img src="${IMG}w185${item.poster_path}" alt="${title}" loading="lazy">
+      <p>${title}</p>
+    </div>`;
+  }).join('');
+}
+
+function goto(id, type, title) {
+  // Reset iframes audio before navigating
+  document.querySelectorAll('.video-frame').forEach(f => { f.src = 'about:blank'; });
+  location.href = `player.html?id=${id}&type=${type}&title=${encodeURIComponent(title)}`;
+}
 
 /* ══════════════════════════════════════
    TMDB PROXY
