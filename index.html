@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
-<title>PelisVidHD</title>
+<title>PelisVidHD - Películas y Series en HD</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
@@ -19,7 +19,7 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
 
 /* ══ SEARCH OVERLAY ══ */
 .search-overlay{
-  position:fixed;inset:0;z-index:400;
+  position:fixed;top:0;right:0;bottom:0;left:0;z-index:400;
   background:rgba(0,0,0,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   display:none;flex-direction:column;
   padding-top:max(16px,env(safe-area-inset-top,0px));
@@ -46,7 +46,7 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
 .search-hint p{font-size:.8rem}
 
 /* ══ GENRE SHEET ══ */
-.sheet-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:none}
+.sheet-overlay{position:fixed;top:0;right:0;bottom:0;left:0;z-index:300;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:none}
 .sheet-overlay.open{display:block}
 .genre-sheet{
   position:fixed;bottom:0;left:0;right:0;z-index:310;
@@ -69,18 +69,43 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
 .genre-btn.active{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);color:#fff}
 .genre-btn i{font-size:.72rem;opacity:.7;width:14px;text-align:center}
 
-/* ══ HERO ══ */
-.hero{position:relative;width:100%;height:100vh;height:100svh;min-height:560px;overflow:hidden;background:#000}
-.slide{position:absolute;inset:0;opacity:0;transition:opacity .65s ease;pointer-events:none}
+/* ══ HERO ══
+   Bottom-anchoring via flexbox (margin-top:auto) instead of
+   position:absolute+bottom — works on every browser, no svh/dvh
+   or `inset` shorthand dependency. Height is set in px via JS
+   (window.innerHeight) as the most reliable fallback. */
+.hero{
+  position:relative;width:100%;overflow:hidden;background:#000;
+  height:100vh; /* fallback before JS runs */
+  min-height:560px;
+}
+.slide{
+  position:absolute;top:0;right:0;bottom:0;left:0;
+  display:flex;flex-direction:column;
+  opacity:0;transition:opacity .65s ease;pointer-events:none;
+}
 .slide.active{opacity:1;pointer-events:all}
-.slide-bg{position:absolute;inset:0;background-size:cover;background-position:center 15%;transform:scale(1.04);transition:transform 6s ease}
+.slide-bg{
+  position:absolute;top:0;right:0;bottom:0;left:0;
+  background-size:cover;background-position:center 15%;
+  transform:scale(1.04);transition:transform 6s ease;z-index:0;
+}
 .slide.active .slide-bg{transform:scale(1)}
-.slide-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.3) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,.45) 50%,rgba(0,0,0,.85) 72%,#000 90%)}
+.slide-bg::after{
+  content:'';position:absolute;top:0;right:0;bottom:0;left:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,.3) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,.45) 50%,rgba(0,0,0,.85) 72%,#000 90%);
+}
 
 .top-logo{position:absolute;top:56px;left:18px;z-index:20;user-select:none;line-height:0}
 .site-logo-img{height:30px;width:auto;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.7))}
 
-.slide-content{position:absolute;bottom:calc(var(--nav-h)+28px);left:0;right:0;padding:0 22px;z-index:10;display:flex;flex-direction:column;align-items:flex-start;text-align:left;max-width:100vw}
+/* Pushed to the bottom of .slide via margin-top:auto (flex) */
+.slide-content{
+  position:relative;z-index:10;margin-top:auto;width:100%;
+  padding:0 22px calc(var(--nav-h) + 28px);
+  display:flex;flex-direction:column;align-items:flex-start;text-align:left;
+  box-sizing:border-box;
+}
 .slide-logo{max-width:72%;max-height:80px;object-fit:contain;object-position:left center;margin-bottom:12px;filter:drop-shadow(0 4px 16px rgba(0,0,0,.85));display:block}
 .slide-title-text{font-size:clamp(1.6rem,7vw,2.8rem);font-weight:800;letter-spacing:-.02em;line-height:1.05;text-shadow:0 2px 16px rgba(0,0,0,.8);margin-bottom:12px}
 .meta-row{display:flex;align-items:center;justify-content:flex-start;gap:13px;margin-bottom:11px;font-size:.76rem;font-weight:500;color:rgba(255,255,255,.78)}
@@ -395,6 +420,19 @@ function setPage(name) {
 function goto(id, type, title) {
   location.href = `player.html?id=${id}&type=${type}&title=${encodeURIComponent(title)}`;
 }
+
+/* ══════════════════════════════════════════
+   HERO HEIGHT — set in px via window.innerHeight.
+   Most reliable across browsers; avoids vh/svh/dvh quirks
+   where mobile browser chrome causes mis-sized 100vh.
+══════════════════════════════════════════ */
+function setHeroHeight() {
+  const hero = document.getElementById('hero');
+  if (hero) hero.style.height = window.innerHeight + 'px';
+}
+setHeroHeight();
+window.addEventListener('resize', setHeroHeight);
+window.addEventListener('orientationchange', () => setTimeout(setHeroHeight, 150));
 
 /* ══════════════════════════════════════════
    BOOT
