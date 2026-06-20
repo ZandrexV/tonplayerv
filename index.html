@@ -249,11 +249,46 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
   border-radius:26px;border:1px solid rgba(255,255,255,.09);height:56px;
   display:flex;align-items:center;justify-content:space-around;padding:0 4px;
   box-shadow:0 8px 32px rgba(0,0,0,.6);
+  transition:top .2s,bottom .2s;
 }
 .bnav-btn{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:13px;background:none;border:none;color:rgba(255,255,255,.38);font-size:1.02rem;cursor:pointer;transition:color .18s,background .18s,transform .15s}
 .bnav-btn.active{color:#fff;background:rgba(255,255,255,.11)}
 .bnav-btn:active{transform:scale(.88)}
 .home-bar{position:fixed;bottom:3px;left:50%;transform:translateX(-50%);width:128px;height:4px;background:rgba(255,255,255,.24);border-radius:2px;z-index:300}
+
+/* ══ DESKTOP LAYOUT (≥900px) ══
+   Nav moves to a slim top bar instead of a floating bottom pill,
+   and posters shrink with more columns so more titles fit per row. */
+@media (min-width:900px){
+  .top-logo{display:none}
+  .bnav{
+    top:0;bottom:auto;left:0;right:0;
+    border-radius:0;border:none;border-bottom:1px solid rgba(255,255,255,.08);
+    height:60px;justify-content:center;gap:6px;
+    background:rgba(9,9,11,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    box-shadow:0 2px 20px rgba(0,0,0,.4);
+  }
+  .bnav-btn{width:46px;height:46px;font-size:1.1rem}
+  .home-bar{display:none}
+
+  /* Page content needs top padding instead of bottom now that nav lives up top */
+  .page{padding-bottom:24px;padding-top:60px}
+  .page-header{top:60px}
+
+  /* Smaller posters, more columns */
+  .big-grid{grid-template-columns:repeat(5,1fr);gap:14px;padding:0 24px;max-width:1400px;margin:0 auto}
+  .big-scroll{padding:0 24px 4px;max-width:1400px;margin:0 auto}
+  .big-scroll .big-card{width:160px}
+  .card-grid{grid-template-columns:repeat(6,1fr)!important;gap:14px;padding:14px 24px;max-width:1400px;margin:0 auto}
+  .cont-scroll{padding:0 24px 4px;max-width:1400px;margin:0 auto}
+
+  .below-hero,.sec-title,.page-header h2{max-width:1400px;margin-left:auto;margin-right:auto}
+  .sec-title,.page-header{padding-left:24px;padding-right:24px}
+}
+@media (min-width:1400px){
+  .big-grid{grid-template-columns:repeat(6,1fr)}
+  .card-grid{grid-template-columns:repeat(7,1fr)!important}
+}
 
 
 /* ══ CONTINUE WATCHING CARD ══ */
