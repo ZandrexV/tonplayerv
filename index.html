@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
-<title>LordFlix</title>
+<title>PelisVidHD</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
@@ -138,10 +138,30 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
 }
 .slide-logo{max-width:72%;max-height:80px;object-fit:contain;object-position:left center;margin-bottom:12px;filter:drop-shadow(0 4px 16px rgba(0,0,0,.85));display:block}
 .slide-title-text{font-size:clamp(1.6rem,7vw,2.8rem);font-weight:800;letter-spacing:-.02em;line-height:1.05;text-shadow:0 2px 16px rgba(0,0,0,.8);margin-bottom:12px}
+
+/* Genre badges (above title, reference-style pill row) */
+.slide-genres{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.slide-genre-pill{
+  background:rgba(255,255,255,.14);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.16);border-radius:999px;
+  padding:.22rem .68rem;font-size:.62rem;font-weight:700;
+  letter-spacing:.02em;color:rgba(255,255,255,.85);
+}
+
 .meta-row{display:flex;align-items:center;justify-content:flex-start;gap:13px;margin-bottom:11px;font-size:.76rem;font-weight:500;color:rgba(255,255,255,.78)}
 .meta-item{display:flex;align-items:center;gap:4px}
 .meta-item i{font-size:.68rem;opacity:.75}
 .star{color:var(--gold)!important;opacity:1!important}
+
+/* Donut rating in hero meta row */
+.hero-donut{position:relative;width:30px;height:30px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hero-donut svg{position:absolute;inset:0;width:30px;height:30px;transform:rotate(-90deg)}
+.hero-donut circle{fill:none;stroke-width:2.5;stroke-linecap:round}
+.hero-donut .track{stroke:rgba(255,255,255,.18)}
+.hero-donut .fill{stroke:var(--gold)}
+.hero-donut .fill.green{stroke:#22c55e}
+.hero-donut .fill.red{stroke:#ef4444}
+.hero-donut span{font-size:.56rem;font-weight:800;color:#fff;z-index:1}
 .overview{font-size:.78rem;font-weight:400;color:rgba(255,255,255,.72);line-height:1.55;max-width:300px;margin:0 0 16px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .btn-row{display:flex;gap:9px;align-items:center;justify-content:flex-start;width:100%;max-width:340px}
 .btn-play{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;background:#fff;color:#000;border:none;border-radius:50px;height:47px;font-family:'Inter',sans-serif;font-size:.86rem;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:opacity .15s}
@@ -154,6 +174,28 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
 .hero-dots{position:absolute;bottom:104px;left:22px;display:flex;gap:5px;z-index:20} /* hardcoded px — calc(var()) unreliable on some browsers */
 .dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.28);transition:all .3s;cursor:pointer}
 .dot.active{width:17px;border-radius:3px;background:#fff}
+
+/* "PRÓXIMOS" up-next strip — desktop only, bottom-right of hero */
+.hero-next{display:none}
+@media (min-width:900px){
+  .hero-next{
+    display:block;position:absolute;bottom:28px;right:28px;z-index:20;
+    text-align:right;
+  }
+  .hero-next-label{
+    font-size:.62rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+    color:rgba(255,255,255,.55);margin-bottom:9px;
+  }
+  .hero-next-row{display:flex;gap:8px}
+  .hero-next-card{
+    width:64px;aspect-ratio:2/3;border-radius:9px;overflow:hidden;
+    cursor:pointer;border:1.5px solid rgba(255,255,255,.12);
+    transition:transform .2s,border-color .2s;background:var(--card);
+  }
+  .hero-next-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.4)}
+  .hero-next-card.active{border-color:#fff}
+  .hero-next-card img{width:100%;height:100%;object-fit:cover;display:block}
+}
 
 /* ══ PAGE VIEWS ══ */
 .page{display:none;padding-bottom:88px} /* 68px nav + 20px gap, hardcoded */
@@ -254,26 +296,45 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
 .bnav-btn{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:13px;background:none;border:none;color:rgba(255,255,255,.38);font-size:1.02rem;cursor:pointer;transition:color .18s,background .18s,transform .15s}
 .bnav-btn.active{color:#fff;background:rgba(255,255,255,.11)}
 .bnav-btn:active{transform:scale(.88)}
+.bnav-label{display:none}
 .home-bar{position:fixed;bottom:3px;left:50%;transform:translateX(-50%);width:128px;height:4px;background:rgba(255,255,255,.24);border-radius:2px;z-index:300}
 
+/* ══ DESKTOP-ONLY PERSISTENT LOGO ══ */
+.desktop-logo{display:none}
+@media (min-width:900px){
+  .desktop-logo{
+    display:block;position:fixed;top:22px;left:28px;z-index:201;
+    line-height:0;user-select:none;
+  }
+  .desktop-logo .logo-text{font-size:1.3rem}
+}
+
 /* ══ DESKTOP LAYOUT (≥900px) ══
-   Nav moves to a slim top bar instead of a floating bottom pill,
-   and posters shrink with more columns so more titles fit per row. */
+   Nav becomes a floating pill at the top-center (reference style):
+   icon + label per item, translucent dark glass background. */
 @media (min-width:900px){
   .top-logo{display:none}
   .bnav{
-    top:0;bottom:auto;left:0;right:0;
-    border-radius:0;border:none;border-bottom:1px solid rgba(255,255,255,.08);
-    height:60px;justify-content:center;gap:6px;
-    background:rgba(9,9,11,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-    box-shadow:0 2px 20px rgba(0,0,0,.4);
+    top:18px;bottom:auto;left:50%;right:auto;
+    transform:translateX(-50%);
+    width:auto;height:52px;
+    border-radius:999px;border:1px solid rgba(255,255,255,.12);
+    justify-content:center;gap:2px;padding:0 8px;
+    background:rgba(24,24,27,.72);backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);
+    box-shadow:0 8px 28px rgba(0,0,0,.5);
   }
-  .bnav-btn{width:46px;height:46px;font-size:1.1rem}
+  .bnav-btn{
+    width:auto;height:38px;padding:0 14px;border-radius:999px;
+    font-size:.92rem;gap:8px;color:rgba(255,255,255,.62);font-weight:600;
+  }
+  .bnav-btn.active{background:rgba(255,255,255,.13);color:#fff}
+  .bnav-btn:hover{color:#fff}
+  .bnav-label{display:inline;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
   .home-bar{display:none}
 
   /* Page content needs top padding instead of bottom now that nav lives up top */
-  .page{padding-bottom:24px;padding-top:60px}
-  .page-header{top:60px}
+  .page{padding-bottom:24px;padding-top:88px}
+  .page-header{top:0;padding-top:24px}
 
   /* Smaller posters, more columns */
   .big-grid{grid-template-columns:repeat(5,1fr);gap:14px;padding:0 24px;max-width:1400px;margin:0 auto}
@@ -432,6 +493,9 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
 
 <div id="diagBanner"></div>
 
+<!-- Desktop-only persistent top-left logo (separate from the floating nav pill) -->
+<div class="desktop-logo"><span class="logo-text">PELISVIDHD</span></div>
+
 <!-- ══ SEARCH OVERLAY ══ -->
 <div class="search-overlay" id="searchOverlay">
   <div class="search-bar">
@@ -456,6 +520,10 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
   <div class="hero" id="hero">
     <div class="top-logo"><span class="logo-text">PELISVIDHD</span></div>
     <div class="hero-dots" id="heroDots"></div>
+    <div class="hero-next" id="heroNext">
+      <div class="hero-next-label">Próximos</div>
+      <div class="hero-next-row" id="heroNextRow"></div>
+    </div>
   </div>
   <div class="below-hero">
     <div class="sec-title" id="contSecTitle" style="display:none">
@@ -600,12 +668,12 @@ html,body{background:var(--black);color:#fff;font-family:'Inter',-apple-system,s
 
 <!-- ══ BOTTOM NAV ══ -->
 <nav class="bnav">
-  <button class="bnav-btn active" id="bn-home"       onclick="setPage('home')">      <i class="fa-solid fa-house"></i></button>
-  <button class="bnav-btn"        id="bn-movies"     onclick="setPage('movies')">    <i class="fa-solid fa-clapperboard"></i></button>
-  <button class="bnav-btn"        id="bn-series"     onclick="setPage('series')">    <i class="fa-solid fa-tv"></i></button>
-  <button class="bnav-btn"        id="bn-watchlist"  onclick="setPage('watchlist')"> <i class="fa-solid fa-bookmark"></i></button>
-  <button class="bnav-btn"        id="bn-history"    onclick="setPage('history')">   <i class="fa-solid fa-clock-rotate-left"></i></button>
-  <button class="bnav-btn"        id="bn-search"     onclick="openSearch()">         <i class="fa-solid fa-magnifying-glass"></i></button>
+  <button class="bnav-btn active" id="bn-home"       onclick="setPage('home')">      <i class="fa-solid fa-house"></i><span class="bnav-label">Inicio</span></button>
+  <button class="bnav-btn"        id="bn-movies"     onclick="setPage('movies')">    <i class="fa-solid fa-clapperboard"></i><span class="bnav-label">Películas</span></button>
+  <button class="bnav-btn"        id="bn-series"     onclick="setPage('series')">    <i class="fa-solid fa-tv"></i><span class="bnav-label">Series</span></button>
+  <button class="bnav-btn"        id="bn-watchlist"  onclick="setPage('watchlist')"> <i class="fa-solid fa-bookmark"></i><span class="bnav-label">Mi Lista</span></button>
+  <button class="bnav-btn"        id="bn-history"    onclick="setPage('history')">   <i class="fa-solid fa-clock-rotate-left"></i><span class="bnav-label">Vistos</span></button>
+  <button class="bnav-btn"        id="bn-search"     onclick="openSearch()">         <i class="fa-solid fa-magnifying-glass"></i><span class="bnav-label">Buscar</span></button>
 </nav>
 <div class="home-bar"></div>
 
@@ -1030,6 +1098,7 @@ async function loadHero() {
   if (!d) return;
   heroItems = d.results.filter(i=>i.backdrop_path).slice(0,8);
   buildDots();
+  buildHeroNext();
   await buildSlide(0);
   startAutoplay();
   heroItems.forEach((item,i)=>{ if(i>0) { const t=item.media_type||(item.first_air_date?'tv':'movie'); fetchLogo(item.id,t); }});
@@ -1041,17 +1110,54 @@ function buildDots() {
   ).join('');
 }
 
+/* "Próximos" desktop strip — small posters of upcoming hero items,
+   click jumps the carousel to that slide */
+function buildHeroNext() {
+  const row = document.getElementById('heroNextRow');
+  if (!row) return;
+  row.innerHTML = heroItems.map((item,i) => {
+    const poster = item.poster_path
+      ? `<img src="${IMG}w154${item.poster_path}" alt="" loading="lazy">`
+      : '';
+    return `<div class="hero-next-card${i===0?' active':''}" id="heroNext${i}" onclick="goSlide(${i})">${poster}</div>`;
+  }).join('');
+}
+
+/* Merge movie + tv genre maps so any TMDB genre_id resolves to a name */
+const GENRE_NAME_MAP = { ...MOVIE_GENRES, ...TV_GENRES };
+function genreNames(ids) {
+  if (!ids || !ids.length) return [];
+  return ids.slice(0,2).map(id => GENRE_NAME_MAP[id]).filter(Boolean);
+}
+
+/* Small donut rating badge for the hero meta row */
+function heroDonutSVG(score) {
+  const r = 12, circ = 2*Math.PI*r;
+  const pct = Math.min(Math.max(score/10,0),1);
+  const dash = pct*circ;
+  const cls = score>=7?'green':score>=5?'':'red';
+  return `<div class="hero-donut">
+    <svg viewBox="0 0 30 30"><circle class="track" cx="15" cy="15" r="${r}"/><circle class="fill ${cls}" cx="15" cy="15" r="${r}" stroke-dasharray="${dash.toFixed(1)} ${circ.toFixed(1)}"/></svg>
+    <span>${Math.round(score*10)}%</span>
+  </div>`;
+}
+
 async function buildSlide(idx) {
   const item = heroItems[idx]; if(!item) return;
   const type  = item.media_type||(item.first_air_date?'tv':'movie');
   const title = item.title||item.name||'';
   const year  = (item.release_date||item.first_air_date||'').split('-')[0];
-  const rating= item.vote_average ? item.vote_average.toFixed(1) : '—';
+  const score = item.vote_average || 0;
+  const genres = genreNames(item.genre_ids);
   const logoUrl = await fetchLogo(item.id, type);
 
   const logoHTML = logoUrl
     ? `<img class="slide-logo" src="${logoUrl}" alt="${title}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="slide-title-text" style="display:none">${title}</div>`
     : `<div class="slide-title-text">${title}</div>`;
+
+  const genresHTML = genres.length
+    ? `<div class="slide-genres">${genres.map(g=>`<span class="slide-genre-pill">${g}</span>`).join('')}</div>`
+    : '';
 
   const slide = document.createElement('div');
   slide.className = 'slide';
@@ -1059,16 +1165,17 @@ async function buildSlide(idx) {
   slide.innerHTML = `
     <div class="slide-bg" style="background-image:url(${IMG}original${item.backdrop_path})"></div>
     <div class="slide-content">
+      ${genresHTML}
       ${logoHTML}
       <div class="meta-row">
-        <div class="meta-item"><i class="fa-solid fa-star star"></i><span>${rating}</span></div>
+        ${score>0 ? heroDonutSVG(score) : ''}
         <div class="meta-item"><i class="fa-regular fa-calendar"></i><span>${year}</span></div>
         <div class="meta-item"><i class="fa-solid fa-${type==='movie'?'film':'tv'}"></i><span>${type==='movie'?'Película':'Serie'}</span></div>
       </div>
       <p class="overview">${item.overview||''}</p>
       <div class="btn-row">
         <button class="btn-play" onclick="goto(${item.id},'${type}','${title.replace(/'/g,"\\'")}','${item.poster_path||''}','${item.backdrop_path||''}')">
-          <i class="fa-solid fa-play" style="font-size:.72rem"></i> PLAY
+          <i class="fa-solid fa-play" style="font-size:.72rem"></i> ACOMPANHAR
         </button>
         <button class="btn-secondary">
           <div class="btn-icon" id="heroWl-${item.id}" onclick="heroToggleWl(${item.id},'${type}','${title.replace(/'/g,"\\'")}','${item.poster_path||''}','${year}','${(item.vote_average||0).toFixed(1)}')">
@@ -1104,6 +1211,7 @@ async function goSlide(idx) {
   next.classList.add('active');
   heroIdx = idx;
   document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  document.querySelectorAll('.hero-next-card').forEach((c,i)=>c.classList.toggle('active',i===idx));
   startAutoplay();
 }
 function startAutoplay() {
