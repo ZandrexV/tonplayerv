@@ -200,6 +200,53 @@
     .rec-card:active { transform: scale(1.03); }
     .rec-card:active .rec-overlay { opacity: 1; }
   }
+
+  /* ================================================================
+     CAST CARDS
+     ================================================================ */
+  .cast-card { transition: transform 0.25s ease; }
+  .cast-card:hover { transform: translateY(-3px); }
+
+  /* ================================================================
+     LANGUAGE TABS
+     ================================================================ */
+  .lang-tab {
+    transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  }
+  .lang-tab.active {
+    background: #E50914;
+    color: #fff;
+    box-shadow: 0 4px 14px -4px rgba(229,9,20,0.6);
+  }
+  .lang-tab:not(.active) {
+    color: rgba(255,255,255,0.55);
+  }
+  .lang-tab:not(.active):hover {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.85);
+  }
+
+  /* ================================================================
+     EPISODE CARDS
+     ================================================================ */
+  .episode-card {
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+  }
+  .episode-card:hover {
+    background-color: rgba(255,255,255,0.08);
+  }
+  .episode-card.active {
+    background-color: rgba(229,9,20,0.12);
+    border-color: rgba(229,9,20,0.45);
+  }
+  .episode-thumb-play {
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .episode-card:hover .episode-thumb-play,
+  .episode-card.active .episode-thumb-play {
+    opacity: 1;
+  }
 </style>
 </head>
 
@@ -289,7 +336,7 @@
   <section class="px-4 md:px-0 mt-4 md:mt-6">
     <div class="glass rounded-2xl p-4 md:p-5">
 
-      <div class="flex items-center justify-between gap-3 mb-4">
+      <div class="flex items-center justify-between gap-3 mb-4 flex-wrap">
         <div class="flex items-center gap-2.5 min-w-0">
           <span id="activeStatusDot" class="status-dot w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
           <div class="min-w-0">
@@ -298,18 +345,23 @@
           </div>
         </div>
 
-        <!-- Toggle de servidores en desktop: se abre como dropdown -->
-        <div class="relative shrink-0">
-          <button id="serverDropdownToggle" class="btn-ripple flex items-center gap-2 bg-white/10 hover:bg-white/20 transition-colors px-4 py-2.5 rounded-xl font-semibold text-sm">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
-            <span class="hidden sm:inline">Servidores</span>
-            <svg id="dropdownChevron" class="w-3.5 h-3.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-          </button>
+        <div class="flex items-center gap-2 shrink-0">
+          <!-- Selector de idioma: filtra qué servidores se muestran -->
+          <div id="languageTabs" class="flex items-center gap-1 bg-white/5 border border-white/10 rounded-xl p-1"></div>
 
-          <!-- Dropdown panel -->
-          <div id="serverDropdownPanel" class="server-dropdown-panel closed absolute right-0 mt-2 w-64 glass-strong rounded-2xl p-2 z-30 border border-white/10 shadow-2xl">
-            <p class="text-[11px] font-bold text-white/40 uppercase tracking-wide px-3 pt-2 pb-1.5">Elegir servidor</p>
-            <div id="serverDropdownList" class="flex flex-col gap-1"></div>
+          <!-- Toggle de servidores en desktop: se abre como dropdown -->
+          <div class="relative shrink-0">
+            <button id="serverDropdownToggle" class="btn-ripple flex items-center gap-2 bg-white/10 hover:bg-white/20 transition-colors px-4 py-2.5 rounded-xl font-semibold text-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
+              <span class="hidden sm:inline">Servidores</span>
+              <svg id="dropdownChevron" class="w-3.5 h-3.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+
+            <!-- Dropdown panel -->
+            <div id="serverDropdownPanel" class="server-dropdown-panel closed absolute right-0 mt-2 w-64 glass-strong rounded-2xl p-2 z-30 border border-white/10 shadow-2xl">
+              <p class="text-[11px] font-bold text-white/40 uppercase tracking-wide px-3 pt-2 pb-1.5">Elegir servidor</p>
+              <div id="serverDropdownList" class="flex flex-col gap-1"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -317,6 +369,96 @@
       <!-- Grid de servidores (siempre visible, estilo "chips" grandes) -->
       <div id="serverGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5"></div>
     </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SELECTOR DE TEMPORADA / EPISODIO (solo series) -->
+  <!-- ============================================================ -->
+  <section id="episodesSection" class="hidden px-4 md:px-0 mt-4 md:mt-6">
+    <div class="glass rounded-2xl p-4 md:p-5">
+
+      <div class="flex items-center justify-between gap-3 mb-4 flex-wrap">
+        <h2 class="text-base md:text-lg font-bold">Episodios</h2>
+
+        <!-- Selector de temporada -->
+        <div class="relative shrink-0">
+          <select id="seasonSelect" class="appearance-none bg-white/10 hover:bg-white/15 transition-colors text-sm font-semibold rounded-xl pl-4 pr-9 py-2.5 outline-none border border-white/10 cursor-pointer"></select>
+          <svg class="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+      </div>
+
+      <!-- Loader de episodios -->
+      <div id="episodesLoading" class="flex flex-col gap-2.5">
+        <div class="skeleton-card h-20 md:h-24 w-full rounded-xl"></div>
+        <div class="skeleton-card h-20 md:h-24 w-full rounded-xl"></div>
+        <div class="skeleton-card h-20 md:h-24 w-full rounded-xl"></div>
+      </div>
+
+      <!-- Lista de episodios -->
+      <div id="episodesList" class="hidden flex flex-col gap-2.5 max-h-[420px] overflow-y-auto no-scrollbar pr-1"></div>
+
+      <p id="episodesEmpty" class="hidden text-white/40 text-sm text-center py-8">No se encontró información de episodios para esta temporada.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- DETALLES: SINOPSIS + REPARTO -->
+  <!-- ============================================================ -->
+  <section class="px-4 md:px-0 mt-4 md:mt-6">
+    <!-- Estado de carga de detalles -->
+    <div id="detailsLoading" class="glass rounded-2xl p-4 md:p-6">
+      <div class="flex gap-4">
+        <div class="skeleton-card shrink-0 w-20 md:w-28 aspect-[2/3] rounded-xl"></div>
+        <div class="flex-1 flex flex-col gap-2 pt-1">
+          <div class="skeleton-card h-4 w-3/4 rounded"></div>
+          <div class="skeleton-card h-3 w-1/2 rounded"></div>
+          <div class="skeleton-card h-3 w-full rounded mt-2"></div>
+          <div class="skeleton-card h-3 w-full rounded"></div>
+          <div class="skeleton-card h-3 w-2/3 rounded"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido de detalles (oculto hasta que TMDB responde) -->
+    <div id="detailsSection" class="hidden glass rounded-2xl p-4 md:p-6">
+      <div class="flex flex-col sm:flex-row gap-4 md:gap-6">
+        <!-- Poster -->
+        <img id="detailsPoster" src="" alt="" class="hidden sm:block shrink-0 w-24 md:w-32 rounded-xl object-cover self-start" />
+
+        <div class="flex-1 min-w-0">
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mb-2">
+            <h2 id="detailsTitle" class="text-lg md:text-2xl font-black leading-tight"></h2>
+          </div>
+
+          <div id="detailsMeta" class="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs md:text-sm text-white/70 font-medium mb-3"></div>
+
+          <p id="detailsOverview" class="text-white/80 text-sm md:text-base leading-relaxed mb-4"></p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
+            <div id="detailsDirectorWrap" class="hidden">
+              <span class="text-white/40 font-medium text-xs uppercase tracking-wide">Director</span>
+              <p id="detailsDirector" class="text-white/90 font-semibold mt-0.5"></p>
+            </div>
+            <div id="detailsCreatorWrap" class="hidden">
+              <span class="text-white/40 font-medium text-xs uppercase tracking-wide">Creador</span>
+              <p id="detailsCreator" class="text-white/90 font-semibold mt-0.5"></p>
+            </div>
+            <div id="detailsGenresWrap" class="hidden">
+              <span class="text-white/40 font-medium text-xs uppercase tracking-wide">Géneros</span>
+              <p id="detailsGenres" class="text-white/90 font-semibold mt-0.5"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reparto -->
+      <div id="castWrap" class="hidden mt-5 md:mt-6 pt-5 md:pt-6 border-t border-white/10">
+        <h3 class="text-sm md:text-base font-bold mb-3">Reparto principal</h3>
+        <div id="castRow" class="flex gap-3 overflow-x-auto no-scrollbar pb-1"></div>
+      </div>
+    </div>
+
+    <!-- Estado de error de detalles (falla silenciosa: sección oculta) -->
   </section>
 
   <!-- ============================================================ -->
@@ -368,41 +510,93 @@
      más a este arreglo. No es necesario tocar el resto del código:
      el selector, el grid y el dropdown se generan dinámicamente
      a partir de "servers".
+
+     Campos de cada servidor:
+       nombre    → texto visible
+       icono     → URL de una imagen (favicon/logo). Si falla o se
+                   deja vacío, se muestra un ícono genérico de reserva.
+       color     → color de acento (hex) para resaltar el servidor activo
+       urlBase   → dominio/base del servidor
+       idioma    → código de idioma fijo de este servidor (ver LANGUAGES
+                   más abajo). Determina en qué pestaña de idioma aparece.
+       formatoUrl (opcional) → plantilla personalizada de la URL del
+                   embed para ESTE servidor. Si no se define, se usa la
+                   fórmula por defecto (ver DEFAULT_URL_FORMAT más abajo).
+
+     Placeholders disponibles en formatoUrl:
+       {urlBase}  → la urlBase del servidor
+       {tmdb_id}  → ID de TMDB del título
+       {season}   → temporada (solo series)
+       {episode}  → episodio (solo series)
      ================================================================ */
+
+  // Idiomas disponibles para filtrar servidores. Cada servidor debe usar
+  // uno de estos códigos en su campo "idioma". Agregar un idioma nuevo
+  // aquí y asignarlo a algún servidor es suficiente: la pestaña aparece
+  // sola en el selector.
+  const LANGUAGES = [
+    { code: "es", label: "Español", flag: "🌐" }, // español neutro/universal (no latino específico)
+    { code: "pt", label: "Português", flag: "🇧🇷" },
+    { code: "en", label: "English", flag: "🇺🇸" },
+  ];
+
   const servers = [
     {
       nombre: "Servidor A",
-      icono: "🇦",
+      icono: "https://www.google.com/s2/favicons?domain=themoviedb.org&sz=64",
       color: "#E50914", // rojo Streamix
       urlBase: "https://api1.ejemplo.com",
+      idioma: "es",
+      // Usa la fórmula por defecto: {urlBase}/play/movie|tv/{tmdb_id}[/{season}/{episode}]
     },
     {
       nombre: "Servidor B",
-      icono: "🇧",
+      icono: "https://www.google.com/s2/favicons?domain=vidsrc.to&sz=64",
       color: "#3B82F6", // azul
       urlBase: "https://api2.ejemplo.com",
+      idioma: "es",
     },
     {
       nombre: "Servidor C",
-      icono: "🇨",
+      icono: "https://www.google.com/s2/favicons?domain=2embed.cc&sz=64",
       color: "#22C55E", // verde
       urlBase: "https://api3.ejemplo.com",
+      idioma: "pt",
+      // Ejemplo de fórmula personalizada: este servidor usa "/embed/" en vez de "/play/"
+      formatoUrl: {
+        movie: "{urlBase}/embed/movie/{tmdb_id}",
+        tv: "{urlBase}/embed/tv/{tmdb_id}/{season}/{episode}",
+      },
     },
     {
       nombre: "Servidor D",
-      icono: "🇩",
+      icono: "https://www.google.com/s2/favicons?domain=smashystream.com&sz=64",
       color: "#A855F7", // violeta
       urlBase: "https://api4.ejemplo.com",
+      idioma: "en",
+      // Ejemplo de fórmula personalizada: este servidor usa query params en vez de segmentos de ruta
+      formatoUrl: {
+        movie: "{urlBase}/watch?type=movie&tmdb={tmdb_id}",
+        tv: "{urlBase}/watch?type=tv&tmdb={tmdb_id}&s={season}&e={episode}",
+      },
     },
   ];
+
+  // Ícono de reserva (SVG en base64) usado cuando un servidor no define
+  // "icono", o cuando la URL de su favicon falla al cargar.
+  const FALLBACK_ICON =
+    "data:image/svg+xml;base64," +
+    btoa(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M9 8v8l7-4z" fill="white" stroke="none"/></svg>`);
 
   /* ================================================================
      2. ESTADO Y CONSTANTES
      ================================================================ */
   const LAST_SERVER_KEY = "streamix_last_server_v1";
+  const LAST_LANGUAGE_KEY = "streamix_last_language_v1";
   const LOAD_TIMEOUT_MS = 12000; // si el iframe no confirma carga en este tiempo, se asume error
 
   let currentServerIndex = 0;
+  let currentLanguage = LANGUAGES[0].code; // se resuelve de verdad en init()
   let loadTimeoutId = null;
   let media = { tipo: "movie", tmdbId: null, temporada: null, episodio: null };
 
@@ -440,17 +634,32 @@
   /* ================================================================
      4. CONSTRUCCIÓN DINÁMICA DE LA URL DEL IFRAME
      ----------------------------------------------------------------
-     Formatos:
+     Fórmula por defecto (usada si el servidor no define "formatoUrl"):
        Película: {urlBase}/play/movie/{tmdb_id}
        Serie:    {urlBase}/play/tv/{tmdb_id}/{season}/{episode}
-     ================================================================ */
-  function buildEmbedUrl(server, mediaInfo) {
-    const base = server.urlBase.replace(/\/+$/, ""); // sin barra final duplicada
 
-    if (mediaInfo.tipo === "tv") {
-      return `${base}/play/tv/${mediaInfo.tmdbId}/${mediaInfo.temporada}/${mediaInfo.episodio}`;
-    }
-    return `${base}/play/movie/${mediaInfo.tmdbId}`;
+     Si el servidor define "formatoUrl", se usa esa plantilla en su
+     lugar, reemplazando los placeholders {urlBase}, {tmdb_id},
+     {season} y {episode} por los valores reales.
+     ================================================================ */
+  const DEFAULT_URL_FORMAT = {
+    movie: "{urlBase}/play/movie/{tmdb_id}",
+    tv: "{urlBase}/play/tv/{tmdb_id}/{season}/{episode}",
+  };
+
+  function fillUrlTemplate(template, server, mediaInfo) {
+    const base = server.urlBase.replace(/\/+$/, ""); // sin barra final duplicada
+    return template
+      .replaceAll("{urlBase}", base)
+      .replaceAll("{tmdb_id}", mediaInfo.tmdbId)
+      .replaceAll("{season}", mediaInfo.temporada ?? "")
+      .replaceAll("{episode}", mediaInfo.episodio ?? "");
+  }
+
+  function buildEmbedUrl(server, mediaInfo) {
+    const format = server.formatoUrl || DEFAULT_URL_FORMAT;
+    const template = mediaInfo.tipo === "tv" ? format.tv : format.movie;
+    return fillUrlTemplate(template, server, mediaInfo);
   }
 
   /* ================================================================
@@ -557,11 +766,34 @@
      Ambos se generan a partir del mismo arreglo "servers", así que
      agregar un servidor nuevo actualiza automáticamente toda la UI.
      ================================================================ */
+  // Genera el HTML del ícono de un servidor: usa la URL de "icono" si existe,
+  // y cae al ícono de reserva (FALLBACK_ICON) si la URL falla al cargar o
+  // el servidor no definió ninguna.
+  function buildServerIconHtml(server, sizeClass) {
+    const src = server.icono && server.icono.trim() ? server.icono : FALLBACK_ICON;
+    return `<img src="${src}" alt="" class="${sizeClass} object-contain rounded" loading="lazy" onerror="this.onerror=null;this.src='${FALLBACK_ICON}';" />`;
+  }
+
+  // Devuelve los servidores (con su índice ORIGINAL en "servers") que
+  // pertenecen al idioma actualmente seleccionado.
+  function getServersForCurrentLanguage() {
+    return servers
+      .map((server, index) => ({ server, index }))
+      .filter(({ server }) => server.idioma === currentLanguage);
+  }
+
   function renderServerGrid() {
     const grid = byId("serverGrid");
     grid.innerHTML = "";
 
-    servers.forEach((server, index) => {
+    const filtered = getServersForCurrentLanguage();
+
+    if (!filtered.length) {
+      grid.innerHTML = `<p class="col-span-full text-center text-white/40 text-sm py-4">No hay servidores disponibles en este idioma todavía.</p>`;
+      return;
+    }
+
+    filtered.forEach(({ server, index }) => {
       const btn = document.createElement("button");
       btn.className = "server-btn btn-ripple flex flex-col items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 py-3 px-2 text-center";
       btn.style.setProperty("--server-glow", hexToRgba(server.color, 0.45));
@@ -569,7 +801,7 @@
       btn.setAttribute("aria-pressed", index === currentServerIndex ? "true" : "false");
 
       btn.innerHTML = `
-        <span class="text-xl leading-none">${server.icono}</span>
+        ${buildServerIconHtml(server, "w-6 h-6")}
         <span class="text-xs font-semibold leading-tight truncate w-full">${server.nombre}</span>
       `;
 
@@ -589,13 +821,22 @@
     const list = byId("serverDropdownList");
     list.innerHTML = "";
 
-    servers.forEach((server, index) => {
+    const filtered = getServersForCurrentLanguage();
+
+    if (!filtered.length) {
+      list.innerHTML = `<p class="text-center text-white/40 text-xs py-3 px-2">Sin servidores en este idioma.</p>`;
+      return;
+    }
+
+    filtered.forEach(({ server, index }) => {
       const item = document.createElement("button");
       item.className = "dropdown-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 transition-colors text-left";
       item.dataset.index = index;
 
       item.innerHTML = `
-        <span class="w-8 h-8 rounded-lg flex items-center justify-center text-base shrink-0" style="background:${hexToRgba(server.color, 0.18)}">${server.icono}</span>
+        <span class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background:${hexToRgba(server.color, 0.18)}">
+          ${buildServerIconHtml(server, "w-4.5 h-4.5")}
+        </span>
         <span class="flex-1 min-w-0">
           <span class="block font-semibold text-sm truncate">${server.nombre}</span>
         </span>
@@ -612,6 +853,58 @@
 
       list.appendChild(item);
     });
+  }
+
+  // Renderiza las pestañas de idioma (Español / Português / English) a
+  // partir de LANGUAGES. Al hacer clic en una, filtra los servidores y
+  // carga automáticamente el primero disponible en ese idioma.
+  function renderLanguageTabs() {
+    const wrap = byId("languageTabs");
+    wrap.innerHTML = "";
+
+    LANGUAGES.forEach((lang) => {
+      const tab = document.createElement("button");
+      tab.className = `lang-tab btn-ripple px-3 py-1.5 rounded-lg text-xs md:text-sm font-semibold flex items-center gap-1.5 ${lang.code === currentLanguage ? "active" : ""}`;
+      tab.dataset.lang = lang.code;
+      tab.setAttribute("aria-pressed", lang.code === currentLanguage ? "true" : "false");
+      tab.innerHTML = `<span>${lang.flag}</span><span class="hidden sm:inline">${lang.label}</span>`;
+
+      tab.addEventListener("click", () => {
+        if (lang.code === currentLanguage) return;
+        switchLanguage(lang.code);
+      });
+
+      wrap.appendChild(tab);
+    });
+  }
+
+  // Cambia el idioma activo: actualiza pestañas, filtra servidores,
+  // guarda la preferencia y recarga el video con el primer servidor
+  // disponible en el nuevo idioma.
+  function switchLanguage(langCode) {
+    currentLanguage = langCode;
+    localStorage.setItem(LAST_LANGUAGE_KEY, langCode);
+
+    document.querySelectorAll("#languageTabs .lang-tab").forEach((tab) => {
+      const isActive = tab.dataset.lang === langCode;
+      tab.classList.toggle("active", isActive);
+      tab.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+
+    renderServerGrid();
+    renderServerDropdown();
+
+    const available = getServersForCurrentLanguage();
+    if (available.length) {
+      loadServer(available[0].index);
+    } else {
+      // No hay servidores en este idioma: no hay nada que cargar.
+      showError();
+      byId("errorTitle").textContent = "Sin servidores en este idioma";
+      byId("errorDescription").textContent = "Prueba con otro idioma desde el selector de arriba.";
+      byId("retryBtn").classList.add("hidden");
+      byId("errorServerToggleBtn").classList.add("hidden");
+    }
   }
 
   // Actualiza el estado visual (activo/inactivo) en grid, dropdown y label superior
@@ -692,7 +985,247 @@
   }
 
   /* ================================================================
-     12. RECOMENDACIONES ("Contenido que te podría gustar")
+  /* ================================================================
+     12. DETALLES: SINOPSIS + REPARTO
+     ----------------------------------------------------------------
+     Pide el detalle del título actual a TMDB (/movie|tv/{id}) junto
+     con el reparto (append_to_response=credits) y lo pinta debajo
+     del reproductor. Si TMDB no responde, la sección de detalles
+     se oculta silenciosamente (no se muestra un error visible aquí,
+     ya que el reproductor sigue funcionando igual sin esta info).
+     ================================================================ */
+  function tmdbProfileUrl(path, size = "w185") {
+    return path ? `${TMDB_IMG}/${size}${path}` : `https://placehold.co/185x278/1a1a1a/666?text=%3F`;
+  }
+
+  function formatRuntime(minutes) {
+    if (!minutes) return null;
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return h > 0 ? `${h}h ${m.toString().padStart(2, "0")}m` : `${m}m`;
+  }
+
+  function buildCastCard(person) {
+    const card = document.createElement("div");
+    card.className = "cast-card shrink-0 w-20 md:w-24 text-center";
+    card.innerHTML = `
+      <img src="${tmdbProfileUrl(person.profile_path)}" alt="${person.name}" loading="lazy"
+           class="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover mx-auto mb-2 border-2 border-white/10" />
+      <p class="text-xs font-bold leading-tight line-clamp-2">${person.name}</p>
+      <p class="text-[10px] text-white/45 leading-tight line-clamp-2 mt-0.5">${person.character || ""}</p>
+    `;
+    return card;
+  }
+
+  async function loadDetails() {
+    if (!media.tmdbId) return;
+
+    byId("detailsLoading").classList.remove("hidden");
+    byId("detailsSection").classList.add("hidden");
+
+    try {
+      const endpoint = media.tipo === "tv" ? `/tv/${media.tmdbId}` : `/movie/${media.tmdbId}`;
+      const data = await tmdbFetch(endpoint, { append_to_response: "credits" });
+
+      // --- Poster ---
+      const posterEl = byId("detailsPoster");
+      if (data.poster_path) {
+        posterEl.src = tmdbPosterUrl(data.poster_path, "w300");
+        posterEl.alt = data.title || data.name || "";
+        posterEl.classList.remove("hidden");
+      } else {
+        posterEl.classList.add("hidden");
+      }
+
+      // --- Título (usa el que trae TMDB si no vino uno explícito por la URL) ---
+      const titulo = media.titulo || data.title || data.name || "Sin título";
+      byId("detailsTitle").textContent = titulo;
+      if (!media.titulo) document.title = `${titulo} | Streamix`;
+
+      // --- Metadatos (año, duración, rating) ---
+      const anio = (data.release_date || data.first_air_date || "").slice(0, 4);
+      const rating = data.vote_average ? Math.round(data.vote_average * 10) / 10 : null;
+      const runtime = media.tipo === "tv"
+        ? (data.episode_run_time && data.episode_run_time[0] ? `${data.episode_run_time[0]}m/ep` : null)
+        : formatRuntime(data.runtime);
+
+      const metaParts = [];
+      if (rating) metaParts.push(`<span class="flex items-center gap-1 text-green-400 font-bold"><svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.958a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.368 2.447a1 1 0 00-.364 1.118l1.287 3.957c.3.922-.755 1.688-1.539 1.118l-3.367-2.446a1 1 0 00-1.176 0l-3.367 2.446c-.784.57-1.838-.196-1.539-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.063 9.385c-.783-.57-.38-1.81.588-1.81h4.163a1 1 0 00.95-.69l1.285-3.958z"/></svg>${rating}</span>`);
+      if (anio) metaParts.push(`<span>${anio}</span>`);
+      if (runtime) metaParts.push(`<span>${runtime}</span>`);
+      metaParts.push(`<span class="badge bg-white/10 px-2 py-0.5 rounded text-[11px] font-bold">${media.tipo === "tv" ? "Serie" : "Película"}</span>`);
+      byId("detailsMeta").innerHTML = metaParts.join('<span class="text-white/25">&middot;</span>');
+
+      // --- Sinopsis ---
+      byId("detailsOverview").textContent = data.overview || "Sin sinopsis disponible.";
+
+      // --- Director (películas) / Creador (series) ---
+      if (media.tipo === "movie") {
+        const director = data.credits && data.credits.crew
+          ? (data.credits.crew.find(c => c.job === "Director") || {}).name
+          : null;
+        if (director) {
+          byId("detailsDirector").textContent = director;
+          byId("detailsDirectorWrap").classList.remove("hidden");
+        }
+        byId("detailsCreatorWrap").classList.add("hidden");
+      } else {
+        const creators = (data.created_by || []).map(c => c.name).join(", ");
+        if (creators) {
+          byId("detailsCreator").textContent = creators;
+          byId("detailsCreatorWrap").classList.remove("hidden");
+        }
+        byId("detailsDirectorWrap").classList.add("hidden");
+      }
+
+      // --- Géneros ---
+      const genres = (data.genres || []).map(g => g.name).join(", ");
+      if (genres) {
+        byId("detailsGenres").textContent = genres;
+        byId("detailsGenresWrap").classList.remove("hidden");
+      }
+
+      // --- Reparto ---
+      const cast = (data.credits && data.credits.cast ? data.credits.cast : []).slice(0, 12);
+      if (cast.length) {
+        const castRow = byId("castRow");
+        castRow.innerHTML = "";
+        cast.forEach(person => castRow.appendChild(buildCastCard(person)));
+        byId("castWrap").classList.remove("hidden");
+      } else {
+        byId("castWrap").classList.add("hidden");
+      }
+
+      byId("detailsLoading").classList.add("hidden");
+      byId("detailsSection").classList.remove("hidden");
+
+      // Si es serie, inicializa el selector de temporada/episodio con
+      // las temporadas reales que reporta TMDB para este título.
+      if (media.tipo === "tv" && Array.isArray(data.seasons)) {
+        initEpisodesModule(data.seasons);
+      }
+    } catch (err) {
+      console.error("[Streamix Player] Error cargando detalles:", err);
+      byId("detailsLoading").classList.add("hidden");
+      // Falla silenciosa: sin detalles visibles, pero el reproductor sigue intacto.
+    }
+  }
+
+  /* ================================================================
+     13. SELECTOR DE TEMPORADA / EPISODIO (solo series)
+     ----------------------------------------------------------------
+     Usa las temporadas reales de la serie (obtenidas en loadDetails)
+     para poblar el <select> de temporadas, y pide a TMDB los episodios
+     de la temporada elegida (/tv/{id}/season/{n}). Al hacer clic en un
+     episodio, actualiza "media" y recarga el mismo servidor activo.
+     ================================================================ */
+  function initEpisodesModule(seasons) {
+    // TMDB incluye a veces la "Temporada 0" (especiales); la dejamos
+    // solo si es la única disponible.
+    const realSeasons = seasons.filter(s => s.season_number > 0);
+    const seasonList = realSeasons.length ? realSeasons : seasons;
+    if (!seasonList.length) return;
+
+    byId("episodesSection").classList.remove("hidden");
+
+    const select = byId("seasonSelect");
+    select.innerHTML = "";
+    seasonList.forEach(s => {
+      const option = document.createElement("option");
+      option.value = s.season_number;
+      option.textContent = s.name || `Temporada ${s.season_number}`;
+      select.appendChild(option);
+    });
+
+    // Preselecciona la temporada que viene en la URL, si existe entre las disponibles
+    const initialSeason = seasonList.some(s => String(s.season_number) === String(media.temporada))
+      ? media.temporada
+      : seasonList[0].season_number;
+    select.value = initialSeason;
+
+    select.addEventListener("change", () => {
+      loadEpisodesForSeason(select.value);
+    });
+
+    loadEpisodesForSeason(initialSeason);
+  }
+
+  async function loadEpisodesForSeason(seasonNumber) {
+    byId("episodesLoading").classList.remove("hidden");
+    byId("episodesList").classList.add("hidden");
+    byId("episodesEmpty").classList.add("hidden");
+
+    try {
+      const data = await tmdbFetch(`/tv/${media.tmdbId}/season/${seasonNumber}`);
+      const episodes = data.episodes || [];
+
+      byId("episodesLoading").classList.add("hidden");
+
+      if (!episodes.length) {
+        byId("episodesEmpty").classList.remove("hidden");
+        return;
+      }
+
+      const list = byId("episodesList");
+      list.innerHTML = "";
+      episodes.forEach(ep => list.appendChild(buildEpisodeCard(ep, seasonNumber)));
+      list.classList.remove("hidden");
+    } catch (err) {
+      console.error("[Streamix Player] Error cargando episodios:", err);
+      byId("episodesLoading").classList.add("hidden");
+      byId("episodesEmpty").classList.remove("hidden");
+    }
+  }
+
+  function buildEpisodeCard(ep, seasonNumber) {
+    const isActive = String(seasonNumber) === String(media.temporada) && String(ep.episode_number) === String(media.episodio);
+
+    const card = document.createElement("button");
+    card.className = `episode-card w-full flex items-center gap-3 p-2.5 rounded-xl border border-white/10 text-left ${isActive ? "active" : ""}`;
+    card.dataset.season = seasonNumber;
+    card.dataset.episode = ep.episode_number;
+
+    const thumbUrl = ep.still_path ? `${TMDB_IMG}/w300${ep.still_path}` : "https://placehold.co/160x90/1a1a1a/666?text=—";
+
+    card.innerHTML = `
+      <div class="relative shrink-0 w-24 md:w-28 aspect-video rounded-lg overflow-hidden bg-black">
+        <img src="${thumbUrl}" alt="" loading="lazy" class="w-full h-full object-cover" />
+        <div class="episode-thumb-play absolute inset-0 bg-black/40 flex items-center justify-center">
+          <span class="w-7 h-7 rounded-full bg-white/90 flex items-center justify-center">
+            <svg class="w-3 h-3 text-black translate-x-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+        </div>
+        ${isActive ? `<span class="absolute bottom-1 right-1 bg-brand text-[9px] font-bold px-1.5 py-0.5 rounded">EN CURSO</span>` : ""}
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-xs md:text-sm font-bold leading-tight line-clamp-1">${ep.episode_number}. ${ep.name || "Sin título"}</p>
+        <p class="text-[11px] text-white/45 mt-1 line-clamp-2 leading-snug">${ep.overview || "Sin sinopsis disponible."}</p>
+      </div>
+    `;
+
+    card.addEventListener("click", () => changeEpisode(seasonNumber, ep.episode_number));
+
+    return card;
+  }
+
+  // Cambia de episodio: actualiza el estado, recarga el iframe en el
+  // MISMO servidor activo (conserva servidor e idioma), y refresca la
+  // UI (header, badge y resaltado en la lista de episodios).
+  function changeEpisode(seasonNumber, episodeNumber) {
+    media.temporada = String(seasonNumber);
+    media.episodio = String(episodeNumber);
+
+    renderMediaHeader();
+    loadServer(currentServerIndex, { isRetry: true });
+
+    document.querySelectorAll("#episodesList .episode-card").forEach(card => {
+      const isActive = card.dataset.season === String(seasonNumber) && card.dataset.episode === String(episodeNumber);
+      card.classList.toggle("active", isActive);
+    });
+  }
+
+  /* ================================================================
+     14. RECOMENDACIONES ("Contenido que te podría gustar")
      ----------------------------------------------------------------
      Usa la API pública de TMDB para traer títulos relacionados con
      lo que se está reproduciendo (/movie|tv/{id}/recommendations).
@@ -807,13 +1340,32 @@
   }
 
   /* ================================================================
-     13. INICIALIZACIÓN
+     15. INICIALIZACIÓN
      ================================================================ */
+
+  // Resuelve el idioma inicial: preferencia guardada > idioma del
+  // navegador (si coincide con alguno soportado) > primer idioma de LANGUAGES.
+  function resolveInitialLanguage() {
+    const saved = localStorage.getItem(LAST_LANGUAGE_KEY);
+    if (saved && LANGUAGES.some(l => l.code === saved)) return saved;
+
+    const browserLang = (navigator.language || "").slice(0, 2).toLowerCase();
+    if (LANGUAGES.some(l => l.code === browserLang)) return browserLang;
+
+    return LANGUAGES[0].code;
+  }
+
+  // Resuelve el servidor inicial DENTRO del idioma ya elegido:
+  // preferencia guardada (si sigue perteneciendo a ese idioma) >
+  // primer servidor disponible en ese idioma.
   function resolveInitialServerIndex() {
     const saved = localStorage.getItem(LAST_SERVER_KEY);
     const savedIndex = saved !== null ? Number(saved) : NaN;
-    if (!Number.isNaN(savedIndex) && servers[savedIndex]) return savedIndex;
-    return 0; // fallback: primer servidor de la lista
+    if (!Number.isNaN(savedIndex) && servers[savedIndex] && servers[savedIndex].idioma === currentLanguage) {
+      return savedIndex;
+    }
+    const available = getServersForCurrentLanguage();
+    return available.length ? available[0].index : 0;
   }
 
   function init() {
@@ -822,6 +1374,8 @@
 
     if (media.titulo) document.title = `${media.titulo} | Streamix`;
 
+    currentLanguage = resolveInitialLanguage();
+    renderLanguageTabs();
     renderServerGrid();
     renderServerDropdown();
     initIframeEvents();
@@ -839,11 +1393,12 @@
 
     const startIndex = resolveInitialServerIndex();
     loadServer(startIndex);
+    loadDetails();
     loadRecommendations();
   }
 
   /* ================================================================
-     14. LISTENERS GLOBALES
+     16. LISTENERS GLOBALES
      ================================================================ */
   byId("serverDropdownToggle").addEventListener("click", toggleDropdown);
 
