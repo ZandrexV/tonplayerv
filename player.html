@@ -542,19 +542,34 @@
 
   const servers = [
     {
-      nombre: "Servidor A",
-      icono: "https://www.google.com/s2/favicons?domain=themoviedb.org&sz=64",
+      nombre: "TONPlayer",
+      icono: "https://tonplayer.space/favicon.ico",
       color: "#E50914", // rojo Streamix
-      urlBase: "https://api1.ejemplo.com",
+      urlBase: "https://api.tonplayer.space",
       idioma: "es",
       // Usa la fórmula por defecto: {urlBase}/play/movie|tv/{tmdb_id}[/{season}/{episode}]
     },
     {
-      nombre: "Servidor B",
-      icono: "https://www.google.com/s2/favicons?domain=vidsrc.to&sz=64",
+      nombre: "Unlimplay",
+      icono: "https://www.google.com/s2/favicons?domain=unlimplay.com&sz=64",
       color: "#3B82F6", // azul
       urlBase: "https://api2.ejemplo.com",
       idioma: "es",
+      formatoUrl: {
+        movie: "{urlBase}/f/embed/movie/{tmdb_id}",
+        tv: "{urlBase}/embed/tv/{tmdb_id}/{season}/{episode}",
+      },
+    },
+    {
+nombre: "Vimeus",
+      icono: "https://www.google.com/s2/favicons?domain=vimeus.com&sz=64",
+      color: "#3B82F6", // azul
+      urlBase: "https://vimeus.com",
+      idioma: "es",
+      formatoUrl: {
+        movie: "{urlBase}/e/movie?tmdb={tmdb_id}&view_key=E12rVOsnfQkR5JTSg4VbnmxJ_5jawynteLk3fTY0wA&title=PVHD&autoplay=1",
+        tv: "{urlBase}/e/serie?tmdb={tmdb_id}&view_key=E12rVOsnfQkR5JTSg4VbnmxJ_5jawynteLk3fTY0wA&se={season}&ep={episode}&title=PVHD&autoplay=1",
+      },
     },
     {
       nombre: "Servidor C",
